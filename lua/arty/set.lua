@@ -36,6 +36,7 @@ vim.cmd.colorscheme "catppuccin"
 
 vim.opt.incsearch = true
 vim.opt.spelllang = 'en_us'
+vim.opt.clipboard = 'unnamedplus'
 
 -- use :make to buidl typescript
 vim.api.nvim_create_autocmd("FileType", {
@@ -57,3 +58,5 @@ vim.api.nvim_create_autocmd("BufEnter", {
     end
   end,
 })
+
+-- vim.g.lspconfig_disable_health_check = true

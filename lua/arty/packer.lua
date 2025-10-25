@@ -14,7 +14,6 @@ return require('packer').startup(function(use)
             'sharkdp/fd',         -- For find_files
         }
     }
-    
 -- HARPOON2
     use "nvim-lua/plenary.nvim" -- don't forget to add this one if you don't have it yet!
     use {
@@ -115,12 +114,17 @@ return require('packer').startup(function(use)
         "Hoffs/omnisharp-extended-lsp.nvim", -- optional for extended support
     }
 
-    require("mason").setup()
+    require("mason").setup({
+        ensure_installed = { "omnisharp"}
+    })
     require("mason-nvim-dap").setup({
         ensure_installed = { "js-debug-adapter", "coreclr" }, -- Auto-install JS Debug Adapter
         automatic_setup = true,
     })
 
-end)
+  use 'fatih/vim-go'
+  use 'ggandor/leap.nvim'
+  use 'folke/which-key.nvim'
 
+end)
 

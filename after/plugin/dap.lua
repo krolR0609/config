@@ -20,6 +20,7 @@ local exts = {
         "vue",
         "svelte",
         "csharp",
+        "go"
       }
 
 local dap = require("dap")

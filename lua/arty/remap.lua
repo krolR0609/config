@@ -1,3 +1,8 @@
+vim.opt.timeout = true
+vim.opt.ttimeout = true          -- важен именно ttimeout/ttimeoutlen
+vim.opt.timeoutlen = 300         -- обычные маппинги (норм. режим)
+vim.opt.ttimeoutlen = 10         -- << сделайте маленьким: 0–20 мс
+
 vim.keymap.set("n", "<Space>", "<Nop>", { silent = true, remap = false })
 vim.g.mapleader = " "
 
@@ -7,7 +12,8 @@ vim.api.nvim_set_keymap("n", "??", "q?", { noremap = true, silent = true });
 vim.cmd([[highlight ExtraWhitespace ctermbg=red guibg=red]])
 vim.cmd([[match ExtraWhitespace /\s\+$/]])
 -- terminal exit by esc
--- vim.keymap.set('t', '<Esc>', [[<C-\><C-n>]])
+vim.keymap.set('t', '<Esc>', [[<C-\><C-n>]],
+{ noremap = true, silent = true, nowait = true, desc = "Exit terminal mode" })
 
 
 -- TOGGLETERM
@@ -70,5 +76,21 @@ end
 vim.keymap.set('n', '<leader>e', toggle , { desc = "Toggle focus between tree and last buffer" })
 vim.keymap.set("n", "<leader>pv", toggle, {silent = true})
 -- vim.keymap.set("n", "<leader>pv", vim.cmd.Ex)
+--
+vim.api.nvim_create_user_command('RemoveCR', function()
+    vim.cmd([[silent! %s/\r//g]])
+    print("Carriage returns removed")
+end, {})
 
-
+vim.g.clipboard = {
+  name = 'win32yank-wsl',
+  copy = {
+    ['+'] = 'win32yank.exe -i --crlf',
+    ['*'] = 'win32yank.exe -i --crlf',
+  },
+  paste = {
+    ['+'] = 'win32yank.exe -o --lf',
+    ['*'] = 'win32yank.exe -o --lf',
+  },
+  cache_enabled = 0,
+}

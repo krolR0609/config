@@ -37,5 +37,5 @@ cmp.setup({
       maxwidth = 50,
       ellipsis_char = '...',
     })
-  }
+  },
 })

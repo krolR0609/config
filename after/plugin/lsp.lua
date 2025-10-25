@@ -1,23 +1,29 @@
 local status, nvim_lsp = pcall(require, "lspconfig")
 if (not status) then return end
 
+--local protocol = require('vim.lsp.protocol')
 local protocol = require('vim.lsp.protocol')
+local capabilities = require("cmp_nvim_lsp").default_capabilities()
 
 local on_attach = function(client, bufnr)
-    -- format on save
-    --
-    --     client.server_capabilities.documentFormattingProvider = trueo
     client.server_capabilities.documentFormattingProvider = true
-
-    if client.server_capabilities.documentFormattingProvider then
-        vim.api.nvim_create_autocmd("BufWritePre", {
-            group = vim.api.nvim_create_augroup("Format", { clear = true }),
-            buffer = bufnr,
-            callback = function() vim.lsp.buf.format({ async = false }) end
-        })
-    end
-
-    vim.diagnostic.enable(bufnr)
+    
+    -- Format on save
+    vim.api.nvim_create_autocmd('BufWritePre', {
+      buffer = bufnr,
+      callback = function()
+        vim.lsp.buf.format({ async = false })
+      end
+    })
+    -- client.server_capabilities.documentFormattingProvider = true
+    -- if client.server_capabilities.documentFormattingProvider then
+    --     vim.api.nvim_create_autocmd("BufWritePre", {
+    --         group = vim.api.nvim_create_augroup("Format", { clear = true }),
+    --         buffer = bufnr,
+    --         callback = function() vim.lsp.buf.format({ async = false }) end
+    --     })
+    -- end
+    -- vim.diagnostic.enable(bufnr)
 end
 
 vim.api.nvim_create_autocmd('LspAttach', {
@@ -53,6 +59,7 @@ nvim_lsp.ts_ls.setup {
         },
     },
 }
+
 nvim_lsp.omnisharp.setup({
     on_attach = on_attach,
     settings = {
@@ -74,12 +81,33 @@ nvim_lsp.omnisharp.setup({
         },
         MsBuild = { useModernNet = true },
     },
-    cmd = { "dotnet", "/Users/arty/.local/bin/omnisharp/OmniSharp.dll" },
+    cmd = {
+        os.getenv("HOME") .. "/.local/share/omnisharp/OmniSharp",
+        "--languageserver",
+        "--hostPID",
+        tostring(vim.fn.getpid())
+    },
+   -- cmd = { "dotnet", "/Users/arty/.local/bin/omnisharp/OmniSharp.dll" },
     root_dir = nvim_lsp.util.root_pattern("*.sln", "*.csproj"),
     handlers = {            -- plug the extended definition handler
         ["textDocument/definition"] = require("omnisharp_extended").handler,
     },
 })
+
+nvim_lsp.gopls.setup {
+  on_attach = on_attach,
+  capabilities = capabilities,
+  settings = {
+    gopls = {
+      gofumpt = true, -- use gofumpt formatting
+      analyses = {
+        unusedparams = true,
+        shadow = true,
+      },
+      staticcheck = true,
+    },
+  },
+}
 
 vim.api.nvim_create_autocmd("FileType", {
     pattern = "cs",
@@ -93,3 +121,16 @@ vim.api.nvim_create_autocmd("FileType", {
         vim.bo.expandtab = true
     end
 })
+vim.api.nvim_create_autocmd("FileType", {
+    pattern = {"go", "cs", "typescript", "typescriptreact", "typescript.tsx"},
+    callback = function()
+        -- Give Treesitter time to load before LSP
+        vim.defer_fn(function()
+            -- Force refresh syntax highlighting
+            if vim.treesitter.highlighter.active then
+                vim.cmd("syntax on")
+            end
+        end, 10)
+    end
+})
+
