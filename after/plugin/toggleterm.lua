@@ -55,12 +55,12 @@ local server_term = Terminal:new({
 })
 
 -- Client terminal in vertical split
-local build_term = Terminal:new({
-  cmd = 'tsc -w',
-  hidden = true,
-  direction = "float",
-  count = 10,
-})
+-- local build_term = Terminal:new({
+--   cmd = 'tsc -w',
+--   hidden = true,
+--   direction = "float",
+--   count = 10,
+-- })
 
 local git_term = Terminal:new({
   hidden = true,

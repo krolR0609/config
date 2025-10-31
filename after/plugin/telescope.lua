@@ -40,7 +40,26 @@ vim.keymap.set('n', '<leader>ld', function()
     severity_limit = 'Error',
     layout_config = { width = 0.9 }  -- Wider view for diagnostics
   })
-end, { desc = '[T]elescope [D]iagnostics' })
+end, { desc = '[T]elescope [D]i/agnostics' })
 
 vim.keymap.set('n', '<leader>p?', builtin.commands, { desc = 'List all commands' })
+
+vim.keymap.set('n', '<leader>pc', function()
+    require('telescope.builtin').current_buffer_fuzzy_find()
+end)
+
+-- Notes
+vim.keymap.set('n', '<leader>nf', function()
+  require('telescope.builtin').find_files({
+    cwd = "~/work/spec",  -- Path to your notes directory
+    prompt_title = "🔍 Notes files"
+  })
+end)
+
+vim.keymap.set('n', '<leader>nn', function()
+  require('telescope.builtin').live_grep({
+    cwd = "~/work/spec",
+    prompt_title = "📝 Search Notes Content"
+  })
+end)
 

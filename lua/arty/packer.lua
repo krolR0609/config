@@ -125,6 +125,5 @@ return require('packer').startup(function(use)
   use 'fatih/vim-go'
   use 'ggandor/leap.nvim'
   use 'folke/which-key.nvim'
-
 end)
 
