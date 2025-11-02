@@ -124,6 +124,15 @@ return require('packer').startup(function(use)
 
   use 'fatih/vim-go'
   use 'ggandor/leap.nvim'
-  use 'folke/which-key.nvim'
+  -- use 'folke/which-key.nvim'
+  use {
+      "kdheepak/lazygit.nvim",
+      cmd = "LazyGit",
+      config = function()
+          -- Optional: Add any basic configuration here
+          vim.g.lazygit_floating_window_winblend = 0 -- Transparency (0-100)
+          vim.g.lazygit_floating_window_scaling_factor = 0.9 -- Window size
+      end,
+  }
 end)
 

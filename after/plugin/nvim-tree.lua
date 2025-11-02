@@ -59,6 +59,8 @@ require('nvim-tree').setup({
         })
 
         vim.keymap.set('n', 'l', api.node.open.edit, opts("Open File or Directory"))
+        vim.keymap.set('n', 'l', api.node.open.edit, opts("Open File or Directory"))
+        vim.keymap.set('n', '<leader>e', '<cmd>NvimTreeFindFileToggle<cr>', { desc = 'Explorer Find File' })
         -- vim.keymap.set('n', 'j', api.node.navigate.sibling.next, opts("Next Node"))
         -- vim.keymap.set('n', 'k', api.node.navigate.sibling.prev, opts("Previous Node"))
 

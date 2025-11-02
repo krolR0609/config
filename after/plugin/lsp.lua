@@ -160,15 +160,19 @@
 --     end
 -- })
 --
+--
+--
+--
+--
 -- local status, nvim_lsp = pcall(require, "lspconfig")
-if (not status) then return end
+-- if (not status) then return end
 
 local protocol = require('vim.lsp.protocol')
 local capabilities = require("cmp_nvim_lsp").default_capabilities()
 
 local on_attach = function(client, bufnr)
     client.server_capabilities.documentFormattingProvider = true
-    
+
     -- Format on save
     vim.api.nvim_create_autocmd('BufWritePre', {
       buffer = bufnr,
@@ -200,82 +204,132 @@ vim.api.nvim_create_autocmd('LspAttach', {
     end,
 })
 
--- TypeScript
-nvim_lsp.ts_ls.setup {
-    on_attach = on_attach,
-    filetypes = { "typescript", "typescriptreact", "typescript.tsx" },
-    cmd = { "typescript-language-server", "--stdio" },
-    settings = {
-        completions = {
-            completeFunctionCalls = true, -- Helps with auto-import
-        },
+local lsps = {
+    {
+        "gopls",
+        {
+            gofumpt = true, -- use gofumpt formatting
+            analyses = {
+                unusedparams = true,
+                shadow = true,
+            },
+            staticcheck = true,
+        }
     },
 }
 
-nvim_lsp.omnisharp.setup({
-    on_attach = on_attach,
-    settings = {
-        RoslynExtensionsOptions = {
-            enableImportCompletion = true,
-            enableDecompilationSupport = true,
-            enableAnalyzersSupport = true,
-            enableAsyncCompletion = true,
-        },
-        FormattingOptions = {
-            enableEditorConfigSupport = true,
-            organizeImports = true,
-            useTabs = false,
-            indentationSize = 4,
-        },
-        InlayHintsOptions = {
-            enableForParameters = true,
-            forLiteralParameters = true,
-        },
-        MsBuild = { useModernNet = true },
-    },
-    cmd = {
-        os.getenv("HOME") .. "/.local/share/omnisharp/OmniSharp",
-        "--languageserver",
-        "--hostPID",
-        tostring(vim.fn.getpid())
-    },
-   -- cmd = { "dotnet", "/Users/arty/.local/bin/omnisharp/OmniSharp.dll" },
-    root_dir = nvim_lsp.util.root_pattern("*.sln", "*.csproj"),
-    handlers = {            -- plug the extended definition handler
-        ["textDocument/definition"] = require("omnisharp_extended").handler,
-    },
-})
-
-nvim_lsp.gopls.setup {
-  on_attach = on_attach,
-  capabilities = capabilities,
-  settings = {
-    gopls = {
-      gofumpt = true, -- use gofumpt formatting
-      analyses = {
-        unusedparams = true,
-        shadow = true,
-      },
-      staticcheck = true,
-    },
-  },
-}
-
-vim.api.nvim_create_autocmd("FileType", {
-    pattern = "cs",
-    callback = function()
-        vim.bo.autoindent = true
-        vim.bo.smartindent = true
-        vim.bo.cindent = false
-        vim.bo.indentexpr = ""
-        vim.bo.tabstop = 4
-        vim.bo.shiftwidth = 4
-        vim.bo.expandtab = true
+for _, lsp in pairs(lsps) do
+    local name, config = lsp[1], lsp[2]
+    vim.lsp.enable(name)
+    if config then
+        vim.lsp.config(name, config)
     end
-})
+end
+
+-- -- TypeScript
+-- nvim_lsp.ts_ls.setup {
+--     on_attach = on_attach,
+--     filetypes = { "typescript", "typescriptreact", "typescript.tsx" },
+--     cmd = { "typescript-language-server", "--stdio" },
+--     settings = {
+--         completions = {
+--             completeFunctionCalls = true, -- Helps with auto-import
+--         },
+--     },
+-- }
+--
+-- nvim_lsp.omnisharp.setup({
+--     on_attach = on_attach,
+--     settings = {
+--         RoslynExtensionsOptions = {
+--             enableImportCompletion = true,
+--             enableDecompilationSupport = true,
+--             enableAnalyzersSupport = true,
+--             enableAsyncCompletion = true,
+--         },
+--         FormattingOptions = {
+--             enableEditorConfigSupport = true,
+--             organizeImports = true,
+--             useTabs = false,
+--             indentationSize = 4,
+--         },
+--         InlayHintsOptions = {
+--             enableForParameters = true,
+--             forLiteralParameters = true,
+--         },
+--         MsBuild = { useModernNet = true },
+--     },
+--     cmd = {
+--         os.getenv("HOME") .. "/.local/share/omnisharp/OmniSharp",
+--         "--languageserver",
+--         "--hostPID",
+--         tostring(vim.fn.getpid())
+--     },
+--    -- cmd = { "dotnet", "/Users/arty/.local/bin/omnisharp/OmniSharp.dll" },
+--     root_dir = nvim_lsp.util.root_pattern("*.sln", "*.csproj"),
+--     handlers = {            -- plug the extended definition handler
+--         ["textDocument/definition"] = require("omnisharp_extended").handler,
+--     },
+-- })
+--
+-- nvim_lsp.gopls.setup {
+--   on_attach = on_attach,
+--   capabilities = capabilities,
+--   settings = {
+--     gopls = {
+--       gofumpt = true, -- use gofumpt formatting
+--       analyses = {
+--         unusedparams = true,
+--         shadow = true,
+--       },
+--       staticcheck = true,
+--     },
+--   },
+-- }
+--
+-- vim.api.nvim_create_autocmd("FileType", {
+--     pattern = "cs",
+--     callback = function()
+--         vim.bo.autoindent = true
+--         vim.bo.smartindent = true
+--         vim.bo.cindent = false
+--         vim.bo.indentexpr = ""
+--         vim.bo.tabstop = 4
+--         vim.bo.shiftwidth = 4
+--         vim.bo.expandtab = true
+--     end
+-- })
+--
+-- vim.api.nvim_create_autocmd("FileType", {
+--     pattern = {"go", "cs", "typescript", "typescriptreact", "typescript.tsx"},
+--     callback = function()
+--         -- Give Treesitter time to load before LSP
+--         vim.defer_fn(function()
+--             -- Force refresh syntax highlighting
+--             if vim.treesitter.highlighter.active then
+--                 vim.cmd("syntax on")
+--             end
+--         end, 50)
+--     end
+-- })
+--
+-- -- -- Filetype-specific settings
+-- -- vim.api.nvim_create_autocmd("FileType", {
+-- --     pattern = "cs",
+-- --     callback = function()
+-- --         vim.bo.autoindent = true
+-- --         vim.bo.smartindent = true
+-- --         vim.bo.cindent = false
+-- --         vim.bo.indentexpr = ""
+-- --         vim.bo.tabstop = 4
+-- --         vim.bo.shiftwidth = 4
+-- --         vim.bo.expandtab = true
+-- --     end
+-- -- })
+--
 vim.api.nvim_create_autocmd("FileType", {
-    pattern = {"go", "cs", "typescript", "typescriptreact", "typescript.tsx"},
-    callback = function()
+    pattern = {"go", "cs", "typescript", "typescriptreact", "typescript.tsx", "javascript", "javascriptreact"},
+    callback = function(args)
         -- Give Treesitter time to load before LSP
         vim.defer_fn(function()
             -- Force refresh syntax highlighting
@@ -286,3 +340,14 @@ vim.api.nvim_create_autocmd("FileType", {
     end
 })
 
+-- Auto-attach LSP to buffers
+vim.api.nvim_create_autocmd('FileType', {
+  pattern = 'go',
+  callback = function()
+    vim.lsp.start({
+      name = 'gopls',
+      cmd = { 'gopls' },
+      root_dir = vim.fs.dirname(vim.fs.find({'go.mod', '.git'}, { upward = true })[1]),
+    })
+  end,
+})

@@ -16,9 +16,6 @@ local map = vim.keymap.set
 map('n', '<leader>gs', ':Git<CR>',             { desc = 'Git status (fugitive)' })
 map('n', '<leader>gd', ':Gdiffsplit<CR>',      { desc = 'Git diff vs index' })
 map('n', '<leader>gb', ':Gblame<CR>',          { desc = 'Git blame' })
--- map('n', '<leader>gc', ':Gcommit<CR>',         { desc = 'Git commit' })
--- map('n', '<leader>gp', ':Gpush<CR>',           { desc = 'Git push' })
--- map('n', '<leader>gP', ':Gpull<CR>',           { desc = 'Git pull' })
 map('n', '<leader>gl', ':Gclog<CR>',           { desc = 'Git log (file)' })
 
 -- Toggle file panel and close Diffview
@@ -35,3 +32,6 @@ map('n', '<leader>gwl', ':Gworktree list<CR>', { desc = 'List git worktrees' })
 map('n', '<leader>gwr', ':Gworktree remove<CR>', { desc = 'Remove git worktree' })
 
 
+-- map('n', '<leader>gc', ':Gcommit<CR>',         { desc = 'Git commit' })
+-- map('n', '<leader>gp', ':Gpush<CR>',           { desc = 'Git push' })
+-- map('n', '<leader>gP', ':Gpull<CR>',           { desc = 'Git pull' })
