@@ -82,15 +82,45 @@ vim.api.nvim_create_user_command('RemoveCR', function()
     print("Carriage returns removed")
 end, {})
 
-vim.g.clipboard = {
-  name = 'win32yank-wsl',
-  copy = {
-    ['+'] = 'win32yank.exe -i --crlf',
-    ['*'] = 'win32yank.exe -i --crlf',
-  },
-  paste = {
-    ['+'] = 'win32yank.exe -o --lf',
-    ['*'] = 'win32yank.exe -o --lf',
-  },
-  cache_enabled = 0,
-}
+vim.api.nvim_set_keymap('v', '<leader>ts', ':lua SnakeCase()<CR>', { noremap = true, silent = true })
+
+function SnakeCase()
+    -- Get visual selection bounds
+    local start_line = vim.fn.line("'<")
+    local end_line = vim.fn.line("'>")
+    local lines = {}
+    
+    -- Remember the original cursor position and selection mode
+    local curpos = vim.fn.getpos('.')
+    
+    for l = start_line, end_line do
+        local line_text = vim.fn.getline(l)
+        -- Calculate column positions (1-indexed in Lua, 0-indexed in Vim)
+        local start_col = (l == start_line) and math.max(vim.fn.col("'<") - 1, 0) or 0
+        local end_col = (l == end_line) and math.min(vim.fn.col("'>") - 1, #line_text - 1) or #line_text - 1
+        
+        if start_col <= end_col then
+            local selected_text = line_text:sub(start_col + 1, end_col + 1)
+            
+            -- Convert to snake_case
+            local snake = selected_text:gsub("([a-z])([A-Z])", "%1_%2")
+                                          :gsub("([A-Z]+)([A-Z][a-z])", "%1_%2")
+                                          :gsub("%s+", "_")
+                                          :gsub("-", "_")
+                                          :lower()
+            
+            -- Replace the selected portion
+            local new_line = line_text:sub(1, start_col) .. snake .. line_text:sub(end_col + 2)
+            table.insert(lines, new_line)
+        else
+            table.insert(lines, line_text)
+        end
+    end
+    
+    -- Set lines in buffer
+    vim.api.nvim_buf_set_lines(0, start_line - 1, end_line, false, lines)
+    
+    -- Restore visual selection
+    vim.fn.setpos('.', curpos)
+    vim.cmd('normal! gv')
+end

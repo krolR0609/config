@@ -1,6 +1,22 @@
 vim.opt.splitright = true 
 
 require('nvim-tree').setup({
+    renderer = {
+        icons = {
+            glyphs = {
+                modified = "●",
+                git = {
+                    unstaged = "[unstg]",
+                    staged = "[stg]",
+                    -- unmerged = "",
+                    -- renamed = "➜",
+                    untracked = "[untrc]",
+                    deleted = "[del]",
+                    ignored = "[ign]",
+                },
+            },
+        },
+    },
     hijack_netrw = true,               -- отключить встроенный netrw
     hijack_cursor = true,              -- курсор прыгает в дерево при открытии
     sync_root_with_cwd = true,
@@ -65,4 +81,6 @@ require('nvim-tree').setup({
         -- vim.keymap.set('n', 'k', api.node.navigate.sibling.prev, opts("Previous Node"))
 
     end
+
+
 });

@@ -31,13 +31,28 @@ vim.opt.updatetime = 50
 
 vim.opt.colorcolumn = "100"
 
-require("catppuccin").setup()
+require("catppuccin").setup({
+    flavour = "frappe", -- latte, frappe, macchiato, mocha
+    transparent_background = true 
+})
 vim.cmd.colorscheme "catppuccin"
 
 vim.opt.incsearch = true
 vim.opt.spelllang = 'en_us'
 vim.opt.clipboard = 'unnamedplus'
-
+-- vim.g.clipboard = {
+--   name = 'xclip',
+--   copy = {
+--     ['+'] = 'xclip -selection clipboard',
+--     ['*'] = 'xclip -selection clipboard',
+--   },
+--   paste = {
+--     ['+'] = 'xclip -selection clipboard -o',
+--     ['*'] = 'xclip -selection clipboard -o',
+--   },
+--   cache_enabled = false,
+-- }
+--
 -- use :make to buidl typescript
 vim.api.nvim_create_autocmd("FileType", {
   pattern = "typescript",
@@ -58,3 +73,11 @@ vim.api.nvim_create_autocmd("BufEnter", {
     end
   end,
 })
+
+vim.cmd([[
+  augroup TransparentBackground
+  autocmd!
+  autocmd ColorScheme * highlight Normal ctermbg=none guibg=none
+  autocmd ColorScheme * highlight NonText ctermbg=none guibg=none
+  augroup END
+]])

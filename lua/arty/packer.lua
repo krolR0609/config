@@ -14,7 +14,7 @@ return require('packer').startup(function(use)
             'sharkdp/fd',         -- For find_files
         }
     }
--- HARPOON2
+    -- HARPOON2
     use "nvim-lua/plenary.nvim" -- don't forget to add this one if you don't have it yet!
     use {
         "ThePrimeagen/harpoon",
@@ -115,24 +115,71 @@ return require('packer').startup(function(use)
     }
 
     require("mason").setup({
-        ensure_installed = { "omnisharp"}
+        registries = {
+            "github:mason-org/mason-registry",
+            "github:Crashdummyy/mason-registry",
+        },
+        ensure_installed = {
+            -- "omnisharp",
+            "roslyn",
+        }
     })
     require("mason-nvim-dap").setup({
         ensure_installed = { "js-debug-adapter", "coreclr" }, -- Auto-install JS Debug Adapter
         automatic_setup = true,
     })
 
-  use 'fatih/vim-go'
-  use 'ggandor/leap.nvim'
-  -- use 'folke/which-key.nvim'
-  use {
-      "kdheepak/lazygit.nvim",
-      cmd = "LazyGit",
-      config = function()
-          -- Optional: Add any basic configuration here
-          vim.g.lazygit_floating_window_winblend = 0 -- Transparency (0-100)
-          vim.g.lazygit_floating_window_scaling_factor = 0.9 -- Window size
-      end,
+    use {
+        "seblyng/roslyn.nvim",
+        ---@module 'roslyn.config'
+        ---@type RoslynNvimConfig
+        opts = {
+            -- your configuration comes here; leave empty for default settings
+        },
+    }
+    use 'fatih/vim-go'
+    use 'ggandor/leap.nvim'
+    -- use 'folke/which-key.nvim'
+    use {
+        "kdheepak/lazygit.nvim",
+        cmd = "LazyGit",
+        config = function()
+            -- Optional: Add any basic configuration here
+            vim.g.lazygit_floating_window_winblend = 0 -- Transparency (0-100)
+            vim.g.lazygit_floating_window_scaling_factor = 0.9 -- Window size
+        end,
+    }
+
+    use {
+        "LuxVim/nvim-luxmotion",
+        config = function()
+            require("luxmotion").setup({
+                cursor = {
+                    duration = 50,
+                    easing = "linear",
+                },
+                performance = { enabled = true },
+            }
+          )
+      end
   }
+
+  use({
+      'MeanderingProgrammer/render-markdown.nvim',
+      after = { 'nvim-treesitter' },
+      requires = { 'nvim-mini/mini.nvim', opt = true },            -- if you use the mini.nvim suite
+      requires = { 'nvim-mini/mini.icons', opt = true },        -- if you use standalone mini plugins
+      requires = { 'nvim-tree/nvim-web-devicons', opt = true }, -- if you prefer nvim-web-devicons
+      config = function()
+          require('render-markdown').setup({
+              heading = {
+                  icons = { '[h]', '[h]', '󰲥 ', '󰲧 ', '󰲩 ', '󰲫 ' },
+              },
+          })
+      end,
+  })
+
+  use "sindrets/diffview.nvim" 
+
 end)
 
