@@ -1,9 +1,7 @@
-require'nvim-treesitter.configs'.setup {
-  ensure_installed = { "javascript", "c_sharp", "typescript", "c", "go", "gomod", "gowork", "gosum", "lua", "vim", "vimdoc", "query", "markdown", "markdown_inline" },
-  sync_install = false,
-  auto_install = false,
-  highlight = {
-    enable = true,
-    additional_vim_regex_highlighting = false,
-  },
-}
+-- New nvim-treesitter is a parser manager only.
+-- Highlighting is built into Neovim — enable it for all buffers with a parser.
+vim.api.nvim_create_autocmd('FileType', {
+  callback = function()
+    pcall(vim.treesitter.start)
+  end,
+})
