@@ -20,7 +20,6 @@ local exts = {
         "vue",
         "svelte",
         "csharp",
-        "go"
       }
 
 local dap = require("dap")
@@ -110,6 +109,75 @@ dap.configurations.cs = {
             return dll_path
         end,
     }
+}
+
+-- Go (delve) adapter
+local dlv_path = vim.fn.exepath("dlv")
+if dlv_path == "" then
+    dlv_path = "/home/nick/.gvm/pkgsets/go1.24.5/global/bin/dlv"
+end
+
+dap.adapters.delve = {
+    type = "server",
+    port = "${port}",
+    executable = {
+        command = dlv_path,
+        args = { "dap", "-l", "127.0.0.1:${port}" },
+    },
+}
+
+-- For attaching to a dlv DAP server you started manually:
+-- Run: dlv debug . --headless --listen=:38697 --api-version=2 --accept-multiclient
+dap.adapters.delve_remote = function(cb, config)
+    vim.ui.input({ prompt = "Delve port (default 38697): ", default = "38697" }, function(port)
+        cb({
+            type = "server",
+            host = "127.0.0.1",
+            port = tonumber(port) or 38697,
+        })
+    end)
+end
+
+dap.configurations.go = {
+    {
+        type = "delve",
+        name = "Debug",
+        request = "launch",
+        program = "${file}",
+    },
+    {
+        type = "delve",
+        name = "Debug Package",
+        request = "launch",
+        program = "${workspaceFolder}",
+    },
+    {
+        type = "delve",
+        name = "Debug Test",
+        request = "launch",
+        mode = "test",
+        program = "${file}",
+    },
+    {
+        type = "delve",
+        name = "Debug Test (go.mod)",
+        request = "launch",
+        mode = "test",
+        program = "./${relativeFileDirname}",
+    },
+    {
+        type = "delve",
+        name = "Attach to process",
+        request = "attach",
+        mode = "local",
+        processId = require("dap.utils").pick_process,
+    },
+    {
+        type = "delve_remote",
+        name = "Attach to running dlv server",
+        request = "attach",
+        mode = "remote",
+    },
 }
 
 require("dapui").setup()

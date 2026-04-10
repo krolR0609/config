@@ -27,7 +27,7 @@ return require('packer').startup(function(use)
         requires = { 'nvim-tree/nvim-web-devicons', opt = true }
     }
 
-    use('nvim-treesitter/nvim-treesitter', {run = ':TSUpdate'} )
+    use { 'nvim-treesitter/nvim-treesitter', branch = 'main', run = ':TSUpdate' }
     use 'nvim-telescope/telescope-file-browser.nvim'
     use 'nvim-tree/nvim-tree.lua'
     use 'nvim-tree/nvim-web-devicons'   -- File icons (optional)
@@ -137,8 +137,13 @@ return require('packer').startup(function(use)
             -- your configuration comes here; leave empty for default settings
         },
     }
-    use 'fatih/vim-go'
-    use 'ggandor/leap.nvim'
+
+    use {
+        'fatih/vim-go',
+        url = "https://codeberg.org/andyg/leap.nvim",
+    }
+
+    -- use 'ggandor/leap.nvim'
     -- use 'folke/which-key.nvim'
     use {
         "kdheepak/lazygit.nvim",
@@ -150,19 +155,20 @@ return require('packer').startup(function(use)
         end,
     }
 
-    use {
-        "LuxVim/nvim-luxmotion",
-        config = function()
-            require("luxmotion").setup({
-                cursor = {
-                    duration = 50,
-                    easing = "linear",
-                },
-                performance = { enabled = true },
-            }
-          )
-      end
-  }
+  --
+  --   use {
+  --       "LuxVim/nvim-luxmotion",
+  --       config = function()
+  --           require("luxmotion").setup({
+  --               cursor = {
+  --                   duration = 50,
+  --                   easing = "linear",
+  --               },
+  --               performance = { enabled = true },
+  --           }
+  --         )
+  --     end
+  -- }
 
   use({
       'MeanderingProgrammer/render-markdown.nvim',
