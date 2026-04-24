@@ -9,7 +9,7 @@ cmp.setup({
   mapping = {
       ['<CR>'] = cmp.mapping.confirm({ select = true }), -- Confirm selection
       ['<C-c>'] = cmp.mapping.complete(),            -- Trigger completion
-      ['<C-e'] = cmp.mapping.abort(),
+      ['<C-e>'] = cmp.mapping.abort(),
       ['<Tab>'] = cmp.mapping(function(fallback)
           if cmp.visible() then               -- меню открыто → выбрать «вниз»
               cmp.select_next_item()
@@ -28,6 +28,7 @@ cmp.setup({
   sources = {
     { name = 'nvim_lsp' },
     { name = 'luasnip' },
+    { name = 'path' },
     { name = 'buffer' },
   },
   formatting = {

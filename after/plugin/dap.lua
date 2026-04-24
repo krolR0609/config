@@ -1,26 +1,12 @@
-table.insert(vim._so_trails, "/?.dylib")
--- require("dap-vscode-js").setup({
---   debugger_path = vim.fn.stdpath("data") .. "mason/packages/js-debug-adapter/js-debug",
---   adapters = { "pwa-node", "pwa-chrome", "pwa-msedge", "node-terminal" },
--- })
---
--- require("dap-vscode-js").setup({
---     debugger_path = vim.fn.resolve(vim.fn.stdpath("data") .. "/site/pack/packer/opt/vscode-js-debug"),
---     adapters = { 'chrome', 'pwa-node', 'pwa-chrome', 'pwa-msedge', 'node-terminal', 'pwa-extensionhost', 'node', 'chrome' }, -- which adapters to register in nvim-dap
---   -- log_file_path = "(stdpath cache)/dap_vscode_js.log" -- path for file logging
---   -- log_file_level = false -- logging level for output to file. set to false to disable file logging.
---   -- log_console_level = vim.log.levels.error -- logging level for output to console. set to false to disable console output.
--- })
---
 local exts = {
-        "javascript",
-        "typescript",
-        "javascriptreact",
-        "typescriptreact",
-        "vue",
-        "svelte",
-        "csharp",
-      }
+    "javascript",
+    "typescript",
+    "javascriptreact",
+    "typescriptreact",
+    "vue",
+    "svelte",
+    "csharp",
+}
 
 local dap = require("dap")
 dap.adapters["node"] = {
@@ -41,7 +27,7 @@ dap.adapters["pwa-node"] = {
         args = { vim.fn.stdpath("data") .. "/mason/packages/js-debug-adapter/js-debug/src/dapDebugServer.js", "${port}" },
     }
 }
-for i, ext in ipairs(exts) do
+for _, ext in ipairs(exts) do
     dap.configurations[ext] = {
         {
             type = "pwa-node",
@@ -99,10 +85,13 @@ dap.configurations.cs = {
         program = function()
             local cwd = vim.fn.getcwd()
             local handle = io.popen("find " .. cwd .. "/bin/Debug -name '*.dll' | head -n 1")
+            if not handle then
+                error("Failed to search for .dll files in bin/Debug")
+            end
             local result = handle:read("*a")
             handle:close()
 
-            local dll_path = result:gsub("%s+", "") -- trim any whitespace/newline
+            local dll_path = result:gsub("%s+", "")
             if dll_path == "" then
                 error("Could not find a .dll in bin/Debug. Make sure the project is built.")
             end
@@ -194,32 +183,25 @@ dap.listeners.before.event_exited["dapui_config"] = function()
   dapui.close({})
 end
 
-vim.keymap.set('n', '<leader>ui', require 'dapui'.toggle)
+vim.keymap.set('n', '<leader>ui', dapui.toggle)
 
--- Set keymaps to control the debugger
+-- Debugger keymaps
 vim.keymap.set('n', '<F5>', function()
-    if vim.fn.filereadable(".vscode/launch.json") then
+    if vim.fn.filereadable(".vscode/launch.json") == 1 then
         local dap_vscode = require("dap.ext.vscode")
         dap_vscode.load_launchjs(nil, {
-            ["node"] = js_based_languages,
-            ["pwa-node"] = js_based_languages,
-            ["chrome"] = js_based_languages,
-            ["pwa-chrome"] = js_based_languages,
+            ["node"] = exts,
+            ["pwa-node"] = exts,
+            ["chrome"] = exts,
+            ["pwa-chrome"] = exts,
         })
     end
     require("dap").continue()
 end)
-vim.keymap.set('n', '<F10>', require 'dap'.step_over)
-vim.keymap.set('n', '<F11>', require 'dap'.step_into)
-vim.keymap.set('n', '<F12>', require 'dap'.step_out)
-vim.keymap.set('n', '<leader>b', require 'dap'.toggle_breakpoint)
+vim.keymap.set('n', '<F10>', require('dap').step_over)
+vim.keymap.set('n', '<F11>', require('dap').step_into)
+vim.keymap.set('n', '<F12>', require('dap').step_out)
+vim.keymap.set('n', '<leader>b', require('dap').toggle_breakpoint)
 vim.keymap.set('n', '<leader>B', function()
-    require 'dap'.set_breakpoint(vim.fn.input('Breakpoint condition: '))
+    require('dap').set_breakpoint(vim.fn.input('Breakpoint condition: '))
 end)
---
--- require('dap.ext.vscode').load_launchjs(nil,
---   { ['pwa-node'] = js_based_languages,
---     ['node'] = js_based_languages,
---     ['chrome'] = js_based_languages,
---     ['pwa-chrome'] = js_based_languages }
--- )
