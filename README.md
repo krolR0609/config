@@ -49,6 +49,8 @@ Personal Neovim config for Go, TypeScript/JavaScript, and C# development.
 |--------|---------|
 | [telescope.nvim](https://github.com/nvim-telescope/telescope.nvim) | Fuzzy finder (files, grep, diagnostics) |
 | [harpoon](https://github.com/ThePrimeagen/harpoon) (v2) | Quick file jumping (4 slots) |
+| [flash.nvim](https://github.com/folke/flash.nvim) | Fast in-buffer jump navigation |
+| [aerial.nvim](https://github.com/stevearc/aerial.nvim) | Symbols outline and symbol navigation |
 | [nvim-tree.lua](https://github.com/nvim-tree/nvim-tree.lua) | File explorer sidebar |
 | [nvim-bufferline.lua](https://github.com/akinsho/nvim-bufferline.lua) | Buffer tabs |
 
@@ -109,6 +111,7 @@ Personal Neovim config for Go, TypeScript/JavaScript, and C# development.
 | [toggleterm.nvim](https://github.com/akinsho/toggleterm.nvim) | Terminal management (float/split/tab) |
 | [lualine.nvim](https://github.com/nvim-lualine/lualine.nvim) | Statusline |
 | [trouble.nvim](https://github.com/folke/trouble.nvim) | Better diagnostics/quickfix list |
+| [which-key.nvim](https://github.com/folke/which-key.nvim) | Keybinding hints (leader mappings only) |
 | [undotree](https://github.com/mbbill/undotree) | Undo history visualizer |
 | [render-markdown.nvim](https://github.com/MeanderingProgrammer/render-markdown.nvim) | Markdown rendering |
 | [vim-tmux-navigator](https://github.com/christoomey/vim-tmux-navigator) | Tmux pane navigation |
@@ -134,10 +137,16 @@ Leader key: `<Space>`
 | `::` | n | Open command history |
 | `//` | n | Open search history |
 | `??` | n | Open reverse search history |
+| `n` | n | Next search result (centered) |
+| `N` | n | Previous search result (centered) |
+| `<C-d>` | n | Half-page down (centered) |
+| `<C-u>` | n | Half-page up (centered) |
+| `<C-w>o` | n | Keep only current split (`:only`) |
 | `<Esc>` | t | Exit terminal mode |
 | `<C-q>` | t | Exit terminal mode (alt) |
 | `<leader>cs` | v | Convert selection to snake_case |
 | `:RemoveCR` | cmd | Remove carriage returns from file |
+| `:tabonly` | cmd | Keep only current tab |
 
 ### File Explorer (NvimTree)
 
@@ -168,6 +177,14 @@ Leader key: `<Space>`
 | `<leader>ld` | n | Diagnostics |
 | `<leader>p?` | n | List all commands |
 | `<leader>pc` | n | Current buffer fuzzy find |
+| `<leader>pb` | n | Open buffers |
+| `<leader>po` | n | Recent files |
+| `<leader>pj` | n | Jump list |
+| `<leader>sw` | n | Search word under cursor |
+| `<leader>ss` | n | LSP document symbols |
+| `<leader>sS` | n | LSP workspace symbols |
+| `<leader>sr` | n | LSP references (picker) |
+| `<leader>sd` | n | LSP definitions (picker) |
 | `<leader>nf` | n | Find notes (~/work/spec) |
 | `<leader>nn` | n | Search notes content |
 
@@ -177,6 +194,23 @@ Leader key: `<Space>`
 |-----|--------|
 | `<C-j>` | Next item |
 | `<C-k>` | Previous item |
+
+### Jump Navigation (flash.nvim)
+
+| Key | Mode | Action |
+|-----|------|--------|
+| `<leader>jj` | n, x, o | Flash jump |
+| `<leader>jt` | n, x, o | Flash treesitter jump |
+| `<leader>jr` | o | Flash remote jump |
+| `<leader>js` | o, x | Flash treesitter search |
+
+### Symbols (aerial.nvim)
+
+| Key | Mode | Action |
+|-----|------|--------|
+| `<leader>so` | n | Toggle symbols outline |
+| `]s` | n | Next symbol |
+| `[s` | n | Previous symbol |
 
 ### Harpoon (Quick File Jumping)
 
@@ -315,6 +349,9 @@ Available in buffers with an active language server.
 | `<leader>ts` | n | Toggle server terminal (float) |
 | `<leader>tg` | n | Toggle git terminal (float) |
 | `<leader>td` | n | Toggle database terminal (tab) |
+| `<leader>tc` | n | Toggle Claude terminal |
+| `<leader>tC` | n | Toggle Claude resume terminal |
+| `<leader>tA` | n | Toggle Cursor Agent terminal |
 | `<leader>th` | n | Terminal #1 (horizontal) |
 | `<leader>tv` | n | Terminal #2 (vertical) |
 | `<leader>tV` | n | Terminal #3 (vertical) |

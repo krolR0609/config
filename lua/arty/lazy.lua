@@ -22,6 +22,14 @@ require("lazy").setup({
       { "<leader>ld", function() require("telescope.builtin").diagnostics({ severity_limit = "Error", layout_config = { width = 0.9 } }) end, desc = "Diagnostics" },
       { "<leader>p?", function() require("telescope.builtin").commands() end, desc = "Commands" },
       { "<leader>pc", function() require("telescope.builtin").current_buffer_fuzzy_find() end, desc = "Buffer fuzzy find" },
+      { "<leader>pb", function() require("telescope.builtin").buffers() end, desc = "Open buffers" },
+      { "<leader>po", function() require("telescope.builtin").oldfiles() end, desc = "Recent files" },
+      { "<leader>pj", function() require("telescope.builtin").jumplist() end, desc = "Jump list" },
+      { "<leader>sw", function() require("telescope.builtin").grep_string({ search = vim.fn.expand("<cword>") }) end, desc = "Search word under cursor" },
+      { "<leader>ss", function() require("telescope.builtin").lsp_document_symbols() end, desc = "Document symbols" },
+      { "<leader>sS", function() require("telescope.builtin").lsp_workspace_symbols() end, desc = "Workspace symbols" },
+      { "<leader>sr", function() require("telescope.builtin").lsp_references() end, desc = "LSP references (picker)" },
+      { "<leader>sd", function() require("telescope.builtin").lsp_definitions() end, desc = "LSP definitions (picker)" },
       { "<leader>nf", function() require("telescope.builtin").find_files({ cwd = "~/work/spec", prompt_title = "Notes files" }) end, desc = "Find notes" },
       { "<leader>nn", function() require("telescope.builtin").live_grep({ cwd = "~/work/spec", prompt_title = "Search Notes" }) end, desc = "Search notes" },
     },
@@ -177,14 +185,39 @@ require("lazy").setup({
       local server_term = Terminal:new({ hidden = true, direction = "float", count = 1 })
       local git_term    = Terminal:new({ hidden = true, direction = "float", count = 2 })
       local db_term     = Terminal:new({ hidden = true, direction = "tab",   count = 3 })
+      local claude_term = Terminal:new({ cmd = "claude", hidden = true, direction = "float", count = 201, close_on_exit = false })
+      local claude_continue_term = Terminal:new({ cmd = "claude --continue", hidden = true, direction = "float", count = 202, close_on_exit = false })
+      local cursor_agent_term = Terminal:new({ cmd = "cursor-agent", hidden = true, direction = "float", count = 203, close_on_exit = false })
 
       local map  = vim.keymap.set
       local opts = { noremap = true, silent = true }
+      local function executable_or_notify(cmd, label)
+        if vim.fn.executable(cmd) == 1 then
+          return true
+        end
+        vim.notify(label .. " is not installed or not in PATH", vim.log.levels.WARN)
+        return false
+      end
 
       map("n", "<leader>ta", "<Cmd>ToggleTermToggleAll<CR>",              { desc = "Toggle all terminals" })
       map("n", "<leader>ts", function() server_term:toggle() end,         { desc = "Toggle Server Terminal" })
       map("n", "<leader>tg", function() git_term:toggle() end,            { desc = "Toggle Git Terminal" })
       map("n", "<leader>td", function() db_term:toggle() end,             { desc = "Toggle Database Terminal" })
+      map("n", "<leader>tc", function()
+        if executable_or_notify("claude", "claude") then
+          claude_term:toggle()
+        end
+      end, { desc = "Toggle Claude terminal" })
+      map("n", "<leader>tC", function()
+        if executable_or_notify("claude", "claude") then
+          claude_continue_term:toggle()
+        end
+      end, { desc = "Toggle Claude resume terminal" })
+      map("n", "<leader>tA", function()
+        if executable_or_notify("cursor-agent", "cursor-agent") then
+          cursor_agent_term:toggle()
+        end
+      end, { desc = "Toggle Cursor Agent terminal" })
       map("n", "<leader>th", function() toggle(1, 15, vim.fn.getcwd(), "horizontal") end,
         vim.tbl_extend("force", opts, { desc = "ToggleTerm #1 (horizontal)" }))
       map("n", "<leader>tv", function() toggle(2, 0,  vim.fn.getcwd(), "vertical") end,
@@ -450,17 +483,54 @@ require("lazy").setup({
     opts = {},
   },
 
-  -- Which-key (keybinding hints)
-  -- {
-  --   "folke/which-key.nvim",
-  --   event = "VeryLazy",
-  --   opts = {
-  --     delay = 1000,
-  --     disable = {
-  --       trigger = { "/", "?" },
-  --     },
-  --   },
-  -- },
+  -- Fast in-buffer jump navigation
+  {
+    "folke/flash.nvim",
+    event = "VeryLazy",
+    opts = {},
+    keys = {
+      { "<leader>jj", function() require("flash").jump() end, mode = { "n", "x", "o" }, desc = "Flash jump" },
+      { "<leader>jt", function() require("flash").treesitter() end, mode = { "n", "x", "o" }, desc = "Flash treesitter" },
+      { "<leader>jr", function() require("flash").remote() end, mode = "o", desc = "Flash remote" },
+      { "<leader>js", function() require("flash").treesitter_search() end, mode = { "o", "x" }, desc = "Flash treesitter search" },
+    },
+  },
+
+  -- Symbols outline and symbol-to-symbol navigation
+  {
+    "stevearc/aerial.nvim",
+    cmd = { "AerialToggle", "AerialOpen", "AerialClose", "AerialNavToggle" },
+    keys = {
+      { "<leader>so", "<cmd>AerialToggle!<CR>", desc = "Symbols outline" },
+      { "]s", function() require("aerial").next({ jump = true }) end, desc = "Next symbol" },
+      { "[s", function() require("aerial").prev({ jump = true }) end, desc = "Prev symbol" },
+    },
+    dependencies = {
+      "nvim-treesitter/nvim-treesitter",
+      "nvim-tree/nvim-web-devicons",
+    },
+    opts = {
+      backends = { "lsp", "treesitter", "markdown", "man" },
+      layout = {
+        default_direction = "prefer_right",
+        min_width = 30,
+        max_width = 40,
+      },
+      show_guides = true,
+    },
+  },
+
+  -- Which-key (leader mappings only)
+  {
+    "folke/which-key.nvim",
+    event = "VeryLazy",
+    opts = {
+      delay = 300,
+      triggers = {
+        { "<leader>", mode = { "n", "v" } },
+      },
+    },
+  },
 
   -- Formatting
   {

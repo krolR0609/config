@@ -9,6 +9,13 @@ vim.g.mapleader = " "
 vim.keymap.set("n", "::", "q:", { noremap = true, silent = true })
 vim.keymap.set("n", "//", "q/", { noremap = true, silent = true })
 vim.keymap.set("n", "??", "q?", { noremap = true, silent = true })
+
+-- Keep context centered while navigating search and large files.
+vim.keymap.set("n", "n", "nzzzv", { noremap = true, silent = true, desc = "Next search result centered" })
+vim.keymap.set("n", "N", "Nzzzv", { noremap = true, silent = true, desc = "Prev search result centered" })
+vim.keymap.set("n", "<C-d>", "<C-d>zz", { noremap = true, silent = true, desc = "Half-page down centered" })
+vim.keymap.set("n", "<C-u>", "<C-u>zz", { noremap = true, silent = true, desc = "Half-page up centered" })
+
 vim.cmd([[highlight ExtraWhitespace ctermbg=red guibg=red]])
 vim.cmd([[match ExtraWhitespace /\s\+$/]])
 -- terminal exit by esc
