@@ -163,7 +163,7 @@ require("lazy").setup({
       toggleterm.setup({
         size = function(term)
           if term.direction == "horizontal" then
-            return 15
+            return 25 
           elseif term.direction == "vertical" then
             return math.floor(vim.o.columns * 0.40)
           end
@@ -177,6 +177,18 @@ require("lazy").setup({
         persist_size = true,
         close_on_exit = true,
         shell = vim.o.shell,
+        float_opts = {
+        -- The border key is *almost* the same as 'nvim_open_win'
+        -- see :h nvim_open_win for details on borders however
+        -- the 'curved' border is a custom border type
+        -- not natively supported but implemented in this plugin.
+        -- border = 'single' | 'double' | 'shadow' | 'curved' | ... other options supported by win open
+        -- like `size`, width, height, row, and col can be a number or function which is passed the current terminal
+        -- width = 98,
+        height = 100,
+        -- winblend = 3,
+        -- title_pos = 'left' | 'center' | 'right', position of the title of the floating window
+        },
       })
 
       local Terminal = require("toggleterm.terminal").Terminal
@@ -559,10 +571,10 @@ require("lazy").setup({
         html = { "prettier" },
         lua = { "stylua" },
       },
-      format_on_save = {
-        timeout_ms = 500,
-        lsp_fallback = true,
-      },
+      -- format_on_save = {
+      --   timeout_ms = 500,
+      --   lsp_fallback = true,
+      -- },
     },
   },
 
