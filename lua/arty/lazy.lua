@@ -50,12 +50,21 @@ require("lazy").setup({
           layout_config = {
             vertical = {
               preview_height = 0.5,
-              preview_cutoff = 40,
+              preview_cutoff = 0,
             },
           },
 
         },
         pickers = {
+          find_files = {
+            previewer = true,
+          },
+          git_files = {
+            previewer = true,
+          },
+          live_grep = {
+            previewer = true,
+          },
           diagnostics = {
             severity_limit = "Warning",
             initial_mode = "normal",
@@ -197,8 +206,8 @@ require("lazy").setup({
       local server_term = Terminal:new({ hidden = true, direction = "float", count = 1 })
       local git_term    = Terminal:new({ hidden = true, direction = "float", count = 2 })
       local db_term     = Terminal:new({ hidden = true, direction = "tab",   count = 3 })
-      local claude_term = Terminal:new({ cmd = "claude", hidden = true, direction = "float", count = 201, close_on_exit = false })
-      local claude_continue_term = Terminal:new({ cmd = "claude --continue", hidden = true, direction = "float", count = 202, close_on_exit = false })
+      local claude_term = Terminal:new({ cmd = "opencode", hidden = true, direction = "tab", count = 201, close_on_exit = false })
+      local claude_continue_term = Terminal:new({ cmd = "opencode --continue", hidden = true, direction = "float", count = 202, close_on_exit = false })
       local cursor_agent_term = Terminal:new({ cmd = "cursor-agent", hidden = true, direction = "float", count = 203, close_on_exit = false })
 
       local map  = vim.keymap.set
@@ -220,11 +229,6 @@ require("lazy").setup({
           claude_term:toggle()
         end
       end, { desc = "Toggle Claude terminal" })
-      map("n", "<leader>tC", function()
-        if executable_or_notify("claude", "claude") then
-          claude_continue_term:toggle()
-        end
-      end, { desc = "Toggle Claude resume terminal" })
       map("n", "<leader>tA", function()
         if executable_or_notify("cursor-agent", "cursor-agent") then
           cursor_agent_term:toggle()
